@@ -1,0 +1,1716 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Estimation and Mapping using a Swarm of Resource-Constrained Robots</title>
+		<meta name="description" content="Presentation at Nanyang Technological University">
+		<meta name="author" content="Ragesh Kumar Ramachandran">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- My Style -->
+		<style type="text/css">
+			div.heading_box {
+				border: 5px solid #AB3E08;
+				border-style: inset;
+			}
+			div.center-justified {
+  				text-align: justify;
+  				margin: 0 auto;
+  				width: 30em;
+			}
+			/*Grid with one row & 5 columns*/
+			div.grid-container5 {
+  			display: grid;
+  			grid: 150px / auto auto auto auto auto;
+  			grid-gap: 10px;
+  			/*background-color: #2196F3;*/
+  			padding: 0px;
+			}
+
+			/*Grid with one row & 3 columns*/
+			div.grid-container3 {
+  			display: grid;
+  			grid: 450px / auto auto auto;
+  			grid-gap: 30px;
+  			/*background-color: #2196F3;*/
+  			padding: 0px;
+			}
+			
+		</style>
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+
+				<!-- Title slide -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+				<div style="z-index: 11;"><h3>Estimation and Mapping using a Swarm of Resource-Constrained Robots</h3></div>
+				<div>
+					<p style="font-weight: bold;"> Ragesh Kumar Ramachandran </p>
+					<p style="font-style: italic;">Advisor : Dr Spring Berman</p>	
+				</div>
+				<div style="border: 5px solid #835C3B; border-style: groove;">
+					<p>Autonomous Collective Systems Laboratory</p>
+				</div>
+				<div style="position: absolute; width: 100px; left: 0px; top: 500px;">
+					<img src="figures/logos/nsf.png" alt="NSF logo" title="NSF logo" height="100" width="100">
+				</div>
+				<div style="position: absolute; width: 150px; right: 0px; top: 500px;">
+					<img src="figures/logos/darpa.png" alt="DARPA logo" title="DARPA logo" height="100" width="150">
+				</div>		
+				<div style="position: absolute; width: 600px; left: 150px; top: 500px;">
+					<img src="figures/logos/asu.png" alt="ASU logo" title="ASU logo" height="100" width="600">
+				</div>						
+				</section>
+
+				<!-- Motivation -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+				<div style="font-size: 28px;"> 
+				<h3>Motivation</h3>
+				<ul>
+					<li><p>Development of robot platforms that can be deployed in swarms to perform tasks autonomously over large spatial and temporal scales.</p></li>
+					<li><p class="fragment">Many potential applications for robotic swarms, including exploration, environmental monitoring, disaster response, search-and-rescue, mining, and  intelligence-surveillance-reconnaissance, will require to operate in dynamic, uncertain and GPS denied environments</p></li>
+					<li><p class="fragment">Despite these limitations, it may be necessary for the swarm to characterize its surroundings, for instance to map obstacles, payloads for transport, or hazardous areas to avoid.</p></li>
+					<li><p class="fragment">Our current research progress and future work focus on novel estimation and mapping strategies using robotic swarms in these types of applications.</p></li>
+				</ul>					
+				</section>
+
+
+				<!-- Overview -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+				<div style="font-size: 28px;"> 
+				<h3>Overview</h3>
+				<ul>
+					<li><p>An Advection-Diffusion-Reaction Based Approach to Mapping an Environmental Feature.</p></li>
+					<li><p>A Probabilistic Topological Approach to Quantifying Environmental Features.</p></li>
+					<li><p>A Probabilistic Approach to Constructing Topological Maps of an Environment.</p></li>
+					<li><p>Metric Map Construction using a Stochastic Robotic Swarm Leveraging Received Signal Strength.</p></li>
+					<li><p>Scalar Field Estimation by Large Networks with Partially Accessible Measurements.</p></li>
+					<li><p>Ongoing work</p></li>
+				</ul>					
+				</section>
+
+
+				<!-- Title -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+
+					<div class="heading_box">
+					<h3> An Advection-Diffusion-Reaction Based Approach to Mapping an Environmental Feature<sup>*</sup></h3>
+					</div>
+					<p align="left" style="font-size: 15px"><sup>*</sup>Ragesh K. Ramachandran, Karthik Elamvazhuthi, and Spring Berman. An optimal control approach to mapping GPS-denied environments using a stochastic robotic swarm. In Int’l. Symp. on Robotics Research (ISRR), 2015</p>					
+				</section>
+
+
+				<!-- ISRR intro slide -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+				
+				<div style="font-size: 30px;"> 
+				<h3>Problem Statement</h3>
+				<p> 
+				    Mapping a single feature of interest using a robotic swarm without communication or localization capabilities.
+				</p>
+				<div style="position: absolute; width: 460px; height: 350px; left: 0px;">
+						<img src="figures/ISRR_2015/intro/formation.png" alt="formation example" title="formation example" height="70%" width="100%">						
+				</div>
+				<div style="position: absolute; width: 460px; height: 350px; right: 0px;">
+						<img src="figures/ISRR_2015/intro/deployment.png" alt="deployment example" title="deployment example" height="70%" width="100%">						
+				</div>				
+				</section>
+
+
+				<!-- ISRR intro Slide part 2-->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Robotic swarm models</h3>
+					<div style="font-size: 30px;"> 
+					<ul>
+						<li><p>Robotic swarms with stochastic behaviors.</p></li>
+						<li><p class="fragment">Macroscopic abstraction using partial differential equations</p></li>
+						<li><p class="fragment">Mapping formulated as an optimal control problem.</p></li>				
+					</ul>
+					</div>
+				</section>
+
+
+				<!-- Related Work-->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Related Work</h3>
+					<div style="font-size: 30px;"> 
+					<ul>
+						<li><p>The most common approach in robotics is SLAM and probabilistic mapping.</p></li>
+						<li><p class="fragment">Mapping an environment using a robotic swarm is a relatively new area of research in the robotics.</p></li>
+						<li><p class="fragment">In <span style="color: #129cea">Dirafzoon et al.(2013)</span>a robotic swarm is used to identify the topological features of an environment from information about the times at which robots encounter other robots and environmental features.</p></li>				
+					</ul>
+					</div>
+				</section>
+
+
+				<!-- Microscopic Model Slide -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Microscopic Model</h3>
+					<div style="font-size: 30px;"> 
+						<p>Robot State Changes (Chemical Reactions)</p>
+						<div style="position: absolute; width: 360px; height: 150px; left: 300px;">
+							<img src="figures/ISRR_2015/intro/passive.png" alt="passive example" title="passive example" height="70%" width="100%">						
+						</div>
+						<div style="position: absolute; width: 960px; top: 300px; font-size: 30px;"> 
+						<p>Robot Motion Model</p>
+						<p>$$\textbf{X}_i(t + \Delta t)  = \textbf{X}_i(t) + (\sqrt{2D \Delta t}) \mathbf{Z}(t) + \textbf{v}(t) \Delta t$$</p>
+						</div>
+					</div>
+				</section>
+
+
+				<!-- Microscopic Model Simulation Slide -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%">
+					<h3>Microscopic Model Simulation</h3>
+						<video width = "960px" height = "500px" src="videos/micro.mp4" type="video/mp4" controls>						
+						</video>										
+				</section>
+
+
+				<!-- Macroscopic Model Slide -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Macroscopic Model</h3>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+						$$\frac{\partial u}{\partial t} = \nabla \cdot (D\nabla u - \mathbf{v}(t)u) - k K(\mathbf{x})u\ in\ L$$
+						$$L = \Omega \times [0,T],\ \Omega \subset \mathbb{R}^2$$
+						<p>No-flux Boundary Conditions : $\vec{n} \cdot (D\nabla u - \mathbf{v}(t)u) = 0  ~~~ on ~~\partial \Omega \times [0,T] $</p>
+						<p>Initial Condition : Gaussian density centered at a point $\mathbf{x}_0 \in \Omega$</p>
+						<p class="fragment">u(x,t) := Active robot density, D := Diffusion coefficient, $\mathbf{v}(t)$ := Velocity field</p>
+						<p class="fragment">k := Reaction rate constant, $K(\mathbf{x})$ := Feature Indicator Function (Map)</p>
+					</div>
+				</section>
+
+
+				<!-- Optimal Control Problem Slide -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Optimal Control Problem</h3>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+						<p style="color: rgb(0,255,0);">Objective Function</p>
+						$$\underset{(\mathbf{u},K(\mathbf{x})) \in U^N \times \Theta_{ad}}{\min}\mathbf{J}(\mathbf{u},K) = \sum_{i = 1}^{N} W_i J_i(u_i) + \frac{\lambda}{2}\|K(\mathbf{x})\|^2_{L^2(\Omega)}$$
+						$$J_i(u_i) = \frac{1}{2}\left \| \int_{\Omega} u_i(\mathbf{x},t) d\mathbf{x} - g_i(t)\right \|_{L^2([0,T])}^2$$
+						<p style="color: rgb(0,255,255);">Admissible control inputs</p> 
+						$\Theta_{ad} = \{ K(\mathbf{x}) \in L^2(\Omega); ~K_{min} \leq K(\mathbf{x}) \leq K_{max} \}$	
+						<p>With the macroscopic model as <span style="color: #1AE26A">Constraint equations</span></p>		
+					</div>
+					<aside class="notes">
+						Solving PDE control problems are hard even in linear settings. This is non-linear and non-convex
+					</aside>
+				</section>
+
+
+				<!-- Lagrangian Slide -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Lagrangian Equation</h3>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 28px;"> 
+						<p style="font-style: italic;">The optimization problem is solved using a gradient descent approach</p>
+						$$\mathcal{L}(\mathbf{u},\mathbf{p},K) = \mathbf{J}(\mathbf{u},K) +  \sum_{i = 1}^{N}  \langle p_i, \Psi_i(u_i,K) \rangle$$
+						<p>$\Psi_i(u_i,K)$ is the $i^{th}$ constraint and $p_i$ is the adjoint variable. </p>	
+					<h3 class="fragment">Gradient Equation</h3>
+						<p class="fragment">$$\mathbf{J}' = \sum_{i = 1}^{N} (\int_0^T(ku_ip_i)(\mathbf{x})dt) + \lambda K(\mathbf{x})$$</p>
+						<p class="fragment">$p_i$ is computed by solving the adjoint equation.</p>						
+					</div>
+				</section>
+
+				<!-- Adjoint Equation Slide -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Adjoint Equation</h3>
+					<div style="position: absolute; width: 960px; height: 450px; top: 150px; font-size: 30px;"> 
+							$$-\frac{\partial p_i}{\partial t} = \nabla \cdot (D\nabla p_i +\mathbf{v}_i(t)p_i) - p_i k K(\vec{x}) - \nabla_{u_{i}}   J_i(u_i) ~~\ in ~\ L$$
+							$$\vec{n}\cdot\nabla p_i = 0 ~~\ on\ ~\Gamma, $$
+							$$p_i(T) = 0, ~~~i = 1,...,N. $$
+							<p>The equations are solved backwards</p>
+					</div>
+				</section>
+
+
+				<!-- Simulation ISRR Slide -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Simulation Results</h3>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+						<div style="position: absolute; width: 300px; height: 450px; left: 0px; font-size: 30px;"> 
+							<img src="figures/ISRR_2015/rectangle_load/actual_map.png" alt="Actual Map" title="Actual Map" height="35%" width="100%">
+							<img src="figures/ISRR_2015/triangle/actual_map.png" alt="Actual Map" title="Actual Map" height="35%" width="100%">
+							<figcaption><p style="font-size: 25px"><u>Actual map</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 300px; height: 450px; left: 330px; font-size: 30px;"> 
+							<img src="figures/ISRR_2015/rectangle_load/map_estimated.png" alt="Estimated map" title="Estimated map" height="35%" width="100%">
+							<img src="figures/ISRR_2015/triangle/map_estimated.png" alt="Estimated map" title="Estimated map" height="35%" width="100%">
+							<figcaption><p style="font-size: 25px"><u>Estimated map</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 300px; height: 450px; right: 0px; font-size: 30px;"> 
+							<img src="figures/ISRR_2015/rectangle_load/error.png" alt="Absolute value of error" title="Absolute value of error" height="35%" width="100%">
+							<img src="figures/ISRR_2015/triangle/error.png" alt="Absolute value of error" title="Absolute value of error" height="35%" width="100%">
+							<figcaption><p style="font-size: 25px"><u>Absolute value of error</u></p></figcaption> 
+						</div>						
+					</div>
+				</section>
+
+
+				<!-- Simulation ISRR Slide 2 -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Simulation Results</h3>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+						<div style="position: absolute; width: 300px; height: 450px; left: 0px; font-size: 30px;"> 
+							<img src="figures/ISRR_2015/center_load8trials_part2/actual_map.png" alt="Actual Map" title="Actual Map" height="35%" width="100%">
+							<img src="figures/ISRR_2015/corner_combined6trails/actual_map.png" alt="Actual Map" title="Actual Map" height="35%" width="100%">
+							<figcaption><p style="font-size: 25px"><u>Actual map</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 300px; height: 450px; left: 330px; font-size: 30px;"> 
+							<img src="figures/ISRR_2015/center_load8trials_part2/map_estimated.png" alt="Estimated map" title="Estimated map" height="35%" width="100%">
+							<img src="figures/ISRR_2015/corner_combined6trails/map_estimated.png" alt="Estimated map" title="Estimated map" height="35%" width="100%">
+							<figcaption><p style="font-size: 25px"><u>Estimated map</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 300px; height: 450px; right: 0px; font-size: 30px;"> 
+							<img src="figures/ISRR_2015/center_load8trials_part2/error.png" alt="Absolute value of error" title="Absolute value of error" height="35%" width="100%">
+							<img src="figures/ISRR_2015/corner_combined6trails/error.png" alt="Absolute value of error" title="Absolute value of error" height="35%" width="100%">
+							<figcaption><p style="font-size: 25px"><u>Absolute value of error</u></p></figcaption> 
+						</div>						
+					</div>
+					<aside class="notes">
+						The case of small objects.
+						Also when they are located far from the origin of the swarm.
+					</aside>
+				</section>
+
+
+				<!-- Simulation ISRR Slide 3 -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Simulation Results</h3>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+						<div style="position: absolute; width: 300px; height: 450px; left: 0px; font-size: 30px;"> 
+							<img src="figures/ISRR_2015/inclined/actual_map.png" alt="Actual Map" title="Actual Map" height="35%" width="100%">
+							<img src="figures/ISRR_2015/l_shape/actual_map.png" alt="Actual Map" title="Actual Map" height="35%" width="100%">
+							<figcaption><p style="font-size: 25px"><u>Actual map</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 300px; height: 450px; left: 330px; font-size: 30px;"> 
+							<img src="figures/ISRR_2015/inclined/map_estimated.png" alt="Estimated map" title="Estimated map" height="35%" width="100%">
+							<img src="figures/ISRR_2015/l_shape/map_estimated.png" alt="Estimated map" title="Estimated map" height="35%" width="100%">
+							<figcaption><p style="font-size: 25px"><u>Estimated map</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 300px; height: 450px; right: 0px; font-size: 30px;"> 
+							<img src="figures/ISRR_2015/inclined/error.png" alt="Absolute value of error" title="Absolute value of error" height="35%" width="100%">
+							<img src="figures/ISRR_2015/l_shape/error.png" alt="Absolute value of error" title="Absolute value of error" height="35%" width="100%">
+							<figcaption><p style="font-size: 25px"><u>Absolute value of error</u></p></figcaption> 
+						</div>						
+					</div>
+				</section>
+
+
+
+				<!-- DARS 2016 *******************************************************************-->
+
+				<!-- Title -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+
+					<div class="heading_box"><h3>A Probabilistic Topological Approach to Quantifying Environmental Features<sup>*</sup></h3></div>
+					<p align="left" style="font-size: 15px"><sup>*</sup>Ragesh K. Ramachandran, Sean Wilson, and Spring Berman. A probabilistic topological approach to feature identification using a stochastic robotic swarm. In To appear in the Int’l. Symposium on Distributed Autonomous Robotic Systems (DARS), 2016</p>
+					
+				</section>
+
+
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>				
+				<h3>Problem Statement</h3>
+				<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+				<div style="position: absolute; width: 500px; left: 20px"> 
+				<p> 
+				    We consider the problem of mapping a bounded, unknown, GPS-denied 2D environment using a swarm of N robots.
+				</p>
+				<p class="fragment" style="font-weight: bold; font-style: italic;">
+					The focus of the research is to find a scalable method to extract the map from the information obtained by resource constrained robots.
+				</p>
+				</div>
+				<div style="position: absolute; width: 500px; left: 500px">
+					<img src="figures/DARS_2016/experiment/4RobotSetup.png" alt="Experimental setup" title="Experimental setup" height="400" width="400">
+				</div>				
+				</div>
+				</section>
+
+
+				<!-- Related work -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+					<h2>Related Work</h2>
+					<ul>
+						<li><p>Our previous work, <span style="color: #129cea">Ramachandran et al.(2015)</span> uses a PDE based model of the swarm to solve the problem. But requires <span style="color: rgb(255,0,0);">large number of robots</span>.</p></li>
+						<li><p class="fragment"><span style="color: #129cea">Ramaithitima et al.(2016)</span> propose an algorithm that covers the free space of the environment with robots and then constructs an approximate generalized Voronoi graph. But requires <span style="color: rgb(255,0,0);">communication</span>.</p></l>
+						<li><p class="fragment">In <span style="color: #129cea">Dirafzoon et al.(2015)</span> persistent homology is applied on a point cloud of the domain’s free region based on encounter time with robots. But each robot requires <span style="color: rgb(255,0,0);">identification label</span>.</p></li>
+					</ul>
+					</div>
+				</section>
+
+
+				<!-- Current focus -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+					<h2>Current focus</h2>
+					<p>
+						As a first step to solve this problem, we quantify the topological features (holes or obstacles) in the domain.
+					</p>
+					</div>
+				</section>
+
+
+				<!-- Types of Scenarios -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+					<h2>Types of Scenarios</h2>
+					<p>
+						<span style="font-weight: bold; color: rgb(255,0,0);">Type I:</span> Robots receive accurate estimates of their global positions when they are close to the boundary of the domain.
+					</p>
+					<p>
+						<span style="font-weight: bold; color: rgb(255,0,0);">Type II:</span> Robots do not receive global position updates anywhere in the domain.
+					</p>
+					</div>					
+				</section>
+
+				<!-- Robot Motion Model -->
+                <section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+                <div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+				<h2>Robot Motion Model</h2>
+				<p>
+				  The displacement of a robot over a time step $\Delta t$ is given by:
+				 $$\mathbf{X}(t + \Delta t) = \mathbf{X}(t) +  \mathbf{V}(t)\Delta t + \mathbf{W}(t)$$
+				</p>
+				<p align="left">
+				Where,
+				</p>
+				<p>
+				$$\mathbf{V}(t) =  [v_x(t),\ v_y(t)]^T = [v\ \cos(\theta(t)), \ v\ \sin(\theta(t))]^T$$ 
+				$$\mathbf{X}(t) =  [x(t),\ y(t)]^T$$
+				$\mathbf{W}(t) \in \mathbb{R}^2$ is a zero mean Gaussian random vector
+				</p>				
+				</div>
+				</section>
+
+
+				<!-- Robot Data -->        
+            	<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+            	<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+				<h2>Robot Data </h2>
+				<p>
+					Data that robot $j \in \{1,...,N\}$ obtains at time $t_k \in [0, T]$, $k \in \{1,...,K\}$, consists of the element $d^j_k = \{\mu^j_k, \Sigma^j_k\}$. 
+				</p>
+				<p>
+				$\mu^j_k \in \mathbb{R}^{2}$ is the mean of the robot's estimate of its $(x,y)$ position. 
+				</p>
+				<p>
+				$\Sigma^j_k \in \mathbb{R}^{2\times2}$ is the covariance matrix of its position estimate.
+				</p>
+				<p>
+				Both at time $t_k$
+				</p>
+				</div>
+				</section>    
+
+
+				<!-- Processing the Data -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+					<h2>Processing the Data</h2>			
+					<ul>
+						<li><p>Discretize the domain into a high-resolution uniform grid. $m_i$ denotes a grid cell.</p></li>
+						<li><p class="fragment">Use the robots' data to assign each grid cell $m_i$ a probability $p^f_i$ of being free.</p> </li>
+						<li><p class="fragment">Integrate the Gaussian distribution with mean $\mu^j_k$ and covariance matrix $\Sigma^j_k$ over the cell region to obtain $p^f_i$.</p></li>
+					</ul>
+					</div>
+					<aside class="notes">
+						p<sup>f</sup><sub>i</sub> denote the probability that a j<sup>th</sup> robot visited the cell i based data d<sup>f</sup><sub>k</sub>.
+					</aside>
+				</section>
+
+				<!-- Processing the Data 2-->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+					<h2>Processing the Data</h2>			
+					<ul>
+						<li><p>Assign a score $s_i \in [0, \infty)$ to each grid cell $m_i$. $s_i = \frac{1}{\left | P_i \right |}\sum _{p \in P_i} \log\left ( \frac{1}{1 - p} \right )$. Where $P_i = \{p_{ijk} ~|~ p_{ijk} > \rho, \rho > 0\}$ and $p_{ijk}$ is computed using the $k^{th}$ data element of the $j^{th}$ robot.</p></li>
+						<li><p class="fragment">Finally, $p^f_i$ of each grid cell being free is computed as $p_{i}^{f} ~=~ 1 - (\exp(s_i))^{-1}$.</p></li>
+					</ul>
+					</div>
+				</section>
+
+				
+				<!-- Probability map TYPE I -->	
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>					
+					<div style="font-size: 30px;">	
+					<h3> Probability map for <span style="color: rgb(255,0,0);">TYPE I</span> environment in Simulation</h3>
+					<div class="grid-container5">
+						<div class="item1"><img src="figures/DARS_2016/simulation/0/pdf_0_bounded.png" alt="PDF with 0 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item2"><img src="figures/DARS_2016/simulation/1/pdf_1_bounded.png" alt="actual map with 0 obstacle" title="Actual map" height="100%" width="100%"></div>
+						<div class="item3"><img src="figures/DARS_2016/simulation/2/pdf_2_bounded.png" alt="PDF with 1 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item4"><img src="figures/DARS_2016/simulation/3/pdf_3_bounded.png" alt="PDF with 1 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item5"><img src="figures/DARS_2016/simulation/4/pdf_4_bounded.png" alt="PDF with 1 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+					</div>
+
+					<div style="position: relative; top: 25px"><h4>Actual Maps</h4></div>
+
+					<div class="grid-container5">
+						<div class="item1"><img src="figures/DARS_2016/simulation/0/world.png" alt="actual map with 0 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item2"><img src="figures/DARS_2016/simulation/1/world.png" alt="actual map with 1 obstacle" title="Actual map" height="100%" width="100%"></div>
+						<div class="item3"><img src="figures/DARS_2016/simulation/2/world.png" alt="actual map with 1 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item4"><img src="figures/DARS_2016/simulation/3/world.png" alt="actual map with 1 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item5"><img src="figures/DARS_2016/simulation/4/world.png" alt="actual map with 1 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+					</div>
+					<div style="position: relative; top: 25px;">
+							<p>30 point robots deployed for 200 seconds</p>
+					</div>
+					</div>
+				</section>
+
+
+				<!-- Probability map TYPE II -->	
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>					
+					<div style="font-size: 30px;">	
+					<h3> Probability map for <span style="color: rgb(255,0,0);">TYPE II</span> environment in Simulation</h3>
+					<div class="grid-container5">
+						<div class="item1"><img src="figures/DARS_2016/simulation/0/pdf_0_unbounded.png" alt="PDF with 0 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item2"><img src="figures/DARS_2016/simulation/1/pdf_1_unbounded.png" alt="PDF with 1 with 0 obstacle" title="Actual map" height="100%" width="100%"></div>
+						<div class="item3"><img src="figures/DARS_2016/simulation/2/pdf_2_unbounded.png" alt="PDF with 2 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item4"><img src="figures/DARS_2016/simulation/3/pdf_3_unbounded.png" alt="PDF with 3 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item5"><img src="figures/DARS_2016/simulation/4/pdf_4_unbounded.png" alt="PDF with 4 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+					</div>
+
+					<div style="position: relative; top: 25px"><h4>Actual Maps</h4></div>
+
+					<div class="grid-container5">
+						<div class="item1"><img src="figures/DARS_2016/simulation/0/world.png" alt="actual map with 0 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item2"><img src="figures/DARS_2016/simulation/1/world.png" alt="actual map with 1 obstacle" title="Actual map" height="100%" width="100%"></div>
+						<div class="item3"><img src="figures/DARS_2016/simulation/2/world.png" alt="actual map with 2 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item4"><img src="figures/DARS_2016/simulation/3/world.png" alt="actual map with 3 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item5"><img src="figures/DARS_2016/simulation/4/world.png" alt="actual map with 4 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+					</div>
+					<div style="position: relative; top: 25px;">
+							<p>30 point robots deployed for 200 seconds</p>
+					</div>
+					</div>
+				</section>
+
+
+				<!-- Finding the Number of Features or Obstacles -->		
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">	
+					<h3>Finding the Number of Features or Obstacles</h3>
+					<ul>
+						<li><p>Point cloud is obtained by sampling a dense, uniformly random set of points from the domain based on a probability map of the domain and rejecting those points that are inside a grid cell whose $p^f_i$ is below a given threshold.</p></li>
+						<li><p class="fragment">Landmark points are selected from the point cloud using the sequential max-min algorithm.</p> </li>
+						<li><p class="fragment">Finally, a Rips complex based filtration is constructed from landmark points and barcode diagrams are extracted.</p></li>
+						<li><p class="fragment">The procedure was tested for Type I & Type II scenarios.</p></li>
+					</ul>
+					</div>
+					<aside class="notes">
+						The new planning technique based on measures could use this. Only Type II results shown in interest of time.
+					</aside>
+				</section>
+
+
+				<!-- Rips complex based filtration -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">
+					<h2>Rips complex based filtration</h2>
+					<h3>Background (Algebraic Topology)</h3>
+					<ul>
+						<li><p> vectors $v_0, v_1, ..., v_k \in \mathbb{R}^n$ are <em>affinely independent</em> if the vectors $ v_1 - v_0, ..., v_k - v_0 $ are linearly independent.</p></li>
+						<li><p>A $k$-simplex $\sigma \subset \mathbb{R}^n$ can be defined as the convex hull of $k+1$ affinely independent vectors $\{v_0, v_1, ..., v_k\}$, called <em>vertices</em>. $\sigma = [v_0, v_1, ..., v_k]$</p></li>
+						<li><p>A face $\tau$ is the convex hull of a subset of $\{v_0, v_1, ..., v_k\}$</p></li>
+						<li><p>A simplicial complex $\kappa$ is defined as a finite collection of simplices $\sigma$.</p></li>
+					</ul>	
+					</div>
+					<aside class="notes">
+						Ask if any know about point set topology, algebraic topology and group theory. 
+					</aside>	
+				</section>
+
+
+				<!-- Illustration -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">
+					<h2>Illustration</h2>
+					<img src="figures/background/simplical.png" alt="simplicial example" title="simplicial example" height="400" width="1000">
+					</div>
+				</section>
+
+
+				<!-- Background -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">					
+					<h3>Background continued...</h3>
+					<ul>
+						<li><p> Rips complex is formed by choosing a parameter $\delta > 0$ and adding a $k$-simplex to the simplicial complex if every vertex in the simplex is within a distance $\delta$ from every other </p></li>
+						<li><p>If $f: \kappa \to \mathbb{R} $ is a function such that $\tau \leq \sigma$ implies that $f(\tau) \leq f(\sigma)$, then $f^{-1}((-\infty, \delta])$ is a simplicial complex denoted by $\kappa_\delta$ and $\delta_1 \leq \delta_2$ implies that $\kappa_{\delta_1} \subseteq \kappa_{\delta_2}$, yielding a filtration of simplicial complexes with $\delta$ as the  filtration parameter.</p></li>	
+						<li><p>A barcode diagram is a graphical representation used to identify the persistent topological features</p></li>				
+					</ul>	
+					</div>	
+					<aside class="notes">f could be any function not necessarily distance function.</aside>
+				</section>
+
+
+				<!-- filtration with barcode -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">
+					<h3>Rips complex based filtration with barcode</h3>
+					<img src="figures/background/filtration_example.png" alt="homology example" title="homology example" height="500" width="800">
+					</div>					
+					<aside class="notes"> Delta is the radius of the ball.</aside>
+				</section>
+
+
+				<!-- Point Cloud and Landmark Points (nested) -->
+			<section>
+				<!-- TYPE II -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">			
+					<h3> Point Cloud and Landmark Points for <span style="color: rgb(255,0,0);">TYPE II</span> environment</h3>
+					<div style="position: relative; top: 0px"><h4>Point cloud</h4></div>
+					<div class="grid-container5">
+						<div class="item1"><img src="figures/DARS_2016/simulation/0/point_cloud_0_unbounded.png" alt="PDF with 0 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item2"><img src="figures/DARS_2016/simulation/1/point_cloud_1_unbounded.png" alt="PDF with 1 with 0 obstacle" title="Actual map" height="100%" width="100%"></div>
+						<div class="item3"><img src="figures/DARS_2016/simulation/2/point_cloud_2_unbounded.png" alt="PDF with 2 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item4"><img src="figures/DARS_2016/simulation/3/point_cloud_3_unbounded.png" alt="PDF with 3 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item5"><img src="figures/DARS_2016/simulation/4/point_cloud_4_unbounded.png" alt="PDF with 4 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+					</div>
+
+					<div style="position: relative; top: 25px"><h4>Landmark Points</h4></div>
+
+					<div class="grid-container5">
+						<div class="item1"><img src="figures/DARS_2016/simulation/0/landmark_0_unbounded.png" alt="PDF with 0 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">No features</p></figcaption></div>
+						<div class="item2"><img src="figures/DARS_2016/simulation/1/landmark_1_unbounded.png" alt="PDF with 1 with 0 obstacle" title="Actual map" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">One feature</p></figcaption></div>
+						<div class="item3"><img src="figures/DARS_2016/simulation/2/Landmark_2_unbounded.png" alt="PDF with 2 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">Two features</p></figcaption></div>
+						<div class="item4"><img src="figures/DARS_2016/simulation/3/landmark_3_unbounded.png" alt="PDF with 3 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">Three features</p></figcaption></div>
+						<div class="item5"><img src="figures/DARS_2016/simulation/4/landmark_4_unbounded.png" alt="PDF with 4 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">Four features</p></figcaption></div>
+					</div>
+					</div>
+
+					<aside class="notes"> Press down for type I</aside>
+				</section>
+
+
+				<!-- TYPE I -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">			
+					<h3> Point Cloud and Landmark Points for <span style="color: rgb(255,0,0);">TYPE I</span> environment</h3>
+					<div style="position: relative; top: 0px"><h4>Point cloud</h4></div>
+					<div class="grid-container5">
+						<div class="item1"><img src="figures/DARS_2016/simulation/0/point_cloud_0_bounded.png" alt="PDF with 0 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item2"><img src="figures/DARS_2016/simulation/1/point_cloud_1_bounded.png" alt="PDF with 1 with 0 obstacle" title="Actual map" height="100%" width="100%"></div>
+						<div class="item3"><img src="figures/DARS_2016/simulation/2/point_cloud_2_bounded.png" alt="PDF with 2 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item4"><img src="figures/DARS_2016/simulation/3/point_cloud_3_bounded.png" alt="PDF with 3 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item5"><img src="figures/DARS_2016/simulation/4/point_cloud_4_bounded.png" alt="PDF with 4 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+					</div>
+
+					<div style="position: relative; top: 25px"><h4>Landmark Points</h4></div>
+
+					<div class="grid-container5">
+						<div class="item1"><img src="figures/DARS_2016/simulation/0/landmark_0_bounded.png" alt="PDF with 0 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">No features</p></figcaption></div>
+						<div class="item2"><img src="figures/DARS_2016/simulation/1/landmark_1_bounded.png" alt="PDF with 1 with 0 obstacle" title="Actual map" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">One feature</p></figcaption></div>
+						<div class="item3"><img src="figures/DARS_2016/simulation/2/Landmark_2_bounded.png" alt="PDF with 2 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">Two features</p></figcaption></div>
+						<div class="item4"><img src="figures/DARS_2016/simulation/3/landmark_3_bounded.png" alt="PDF with 3 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">Three features</p></figcaption></div>
+						<div class="item5"><img src="figures/DARS_2016/simulation/4/landmark_4_bounded.png" alt="PDF with 4 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">Four features</p></figcaption></div>
+					</div>
+					</div>
+				</section>
+
+			</section>
+
+
+				<!-- Barcode Diagrams(nested)-->
+			<section>
+				<!-- TYPE II -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">			
+					<h3>Barcode Diagram <span style="color: rgb(255,0,0);">TYPE II</span> environments</h3>					
+					<div class="grid-container5" style="grid: 450px / auto auto auto auto auto;">
+						<div class="item1"><img src="figures/DARS_2016/simulation/0/barcode_0_unbounded.png" alt="PDF with 0 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">No features</p></figcaption></div>
+						<div class="item2"><img src="figures/DARS_2016/simulation/1/barcode_1_unbounded.png" alt="PDF with 1 with 0 obstacle" title="Actual map" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">One feature</p></figcaption></div>
+						<div class="item3"><img src="figures/DARS_2016/simulation/2/barcode_2_unbounded.png" alt="PDF with 2 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">Two features</p></figcaption></div>
+						<div class="item4"><img src="figures/DARS_2016/simulation/3/barcode_3_unbounded.png" alt="PDF with 3 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">Three features</p></figcaption></div>
+						<div class="item5"><img src="figures/DARS_2016/simulation/4/barcode_4_unbounded.png" alt="PDF with 4 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">Four features</p></figcaption></div>
+					</div>		
+					</div>
+
+					<aside class="notes"> Press down for type I Barcode</aside>
+
+				</section>
+
+
+				<!-- TYPE I -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">			
+					<h3>Barcode Diagram <span style="color: rgb(255,0,0);">TYPE I</span> environments</h3>
+					<div class="grid-container5" style="grid: 450px / auto auto auto auto auto;">
+						<div class="item1"><img src="figures/DARS_2016/simulation/0/barcode_0_bounded.png" alt="PDF with 0 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">No features</p></figcaption></div>
+						<div class="item2"><img src="figures/DARS_2016/simulation/1/barcode_1_bounded.png" alt="PDF with 1 with 0 obstacle" title="Actual map" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">One feature</p></figcaption></div>
+						<div class="item3"><img src="figures/DARS_2016/simulation/2/barcode_2_bounded.png" alt="PDF with 2 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">Two features</p></figcaption></div>
+						<div class="item4"><img src="figures/DARS_2016/simulation/3/barcode_3_bounded.png" alt="PDF with 3 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">Three features</p></figcaption></div>
+						<div class="item5"><img src="figures/DARS_2016/simulation/4/barcode_4_bounded.png" alt="PDF with 4 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">Four features</p></figcaption></div>
+					</div>					
+					</div>
+				</section>
+
+			</section>
+
+
+			<!-- varying time of deployment -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">
+					<h3>Effect of varying time of deployment on estimation</h3>
+					<img src="figures/DARS_2016/simulation/varying_time.png" alt="varying time" title="varying time" height="400px" width="600px">
+					<div style="position: relative; top: 0px;">
+							<p>30 point robots deployed for each simulation</p>
+					</div>
+					</div>					
+				</section>
+
+
+				<!-- varying number of robots -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">
+					<h3>Effect of varying number of robots on estimation</h3>
+					<img src="figures/DARS_2016/simulation/varying_robots.png" alt="varying robots" title="varying robots" height="400px" width="600px">	
+					<div style="position: relative; top: 0px;">
+							<p>Time of deployment for each simulation : 200 seconds</p>
+					</div>	
+					</div>			
+				</section>
+
+
+				<!-- Experiments TYPE II -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">					 
+						<h2>Experiments on <span style="color: rgb(255,0,0);">TYPE II</span> environment</h2>
+						<h3>Experimental Setups</h3>
+						<div class="grid-container3">
+							<div class="item1"><img src="figures/DARS_2016/experiment/OneObject.png" alt="Experimental setup" title="Experimental setup" height="80%" width="100%">
+							<figcaption><p style="font-size: 25px">One feature</p></figcaption></div>
+							<div class="item2"><img src="figures/DARS_2016/experiment/TwoObject.png" alt="Experimental setup" title="Experimental setup" height="80%" width="100%">
+							<figcaption><p style="font-size: 25px">Two features</p></figcaption></div>
+							<div class="item3"><img src="figures/DARS_2016/experiment/ThreeObject.png" alt="Experimental setup" title="Experimental setup" height="80%" width="100%">							
+							<figcaption><p style="font-size: 25px">Three features</p></figcaption></div>
+						</div>
+					</div>
+				</section>
+
+
+				<!-- Pheeno robotic platform -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">		
+						<h3>Introducing Our Robotic Platform <span style="font-style: italic; color: #3BDE17">Pheeno</span><sup>1</sup></h3>
+						<div style="position: absolute; left: 50px; height: 420px; width: 400px;">
+							<img src="figures/pheeno/pheeno1.png" alt="Pheeno Watching ducky" title="Pheeno Watching ducky" height="80%" width="100%">
+							<figcaption>Pheeno watching ducky</figcaption>							
+						</div>
+						<div style="position: absolute; top:550px">
+							<p align="left" style="font-size: 15px"><sup>1</sup>Sean Wilson et al., IEEE R-AL, July 2016</p>
+						</div>
+						<div style="position: absolute; left: 470px; height: 420px; width: 400px;">
+							<img src="figures/pheeno/pheeno2.png" alt="Pheeno with gripper" title="Pheeno with gripper" height="80%" width="100%">
+							<figcaption>Pheeno holding ducky</figcaption>
+						</div>	
+					</div>
+				</section>			 
+
+
+				<!-- Experiments Illustration -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">					
+						<h2>An Experimental Illustration</h2>
+						<div class="grid-container3">
+							<div class="item1"><img src="figures/DARS_2016/experiment/4RobotSetup.png" alt="Experimental setup" title="Experimental setup" height="92%" width="100%"><figcaption>Experimental setup</figcaption></div>
+							<div class="item2"><img src="figures/DARS_2016/experiment/pdf.png" alt="Experimental Result pdf" title="Experimental result pdf" height="80" width="100%">
+							<figcaption>Probability map</figcaption>
+							<img src="figures/DARS_2016/experiment/pointcloud.png" alt="Experimental Result pointcloud" title="Experimental result pointcloud" height="80" width="100%">
+							<figcaption>Point cloud</figcaption>
+							<img src="figures/DARS_2016/experiment/landmark.png" alt="Experimental Result landmark" title="Experimental result landmark" height="80" width="100%">
+							<figcaption>Landmark points</figcaption>
+							</div>
+							<div class="item3"><img src="figures/DARS_2016/experiment/barcode.png" alt="Experimental Barcode" title="Experimental Result Barcode" height="92%" width="100%">Barcode</div>
+						</div>	
+						<div style="position: relative; top: 30px; left: 0px; height: 40px; width: 520px; font-size: 20px;">
+							<p style="text-align: left; color: #10E834">*4 robots deployed for 180 seconds</p>
+						</div>				
+					</div>				
+				</section>
+
+
+				<!-- Experiments Validation of Estimation -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">
+					<h3>Experimental Validation of Estimation</h3>					
+						<div style="position: absolute; left: 50px; height: 420px; width: 400px;">
+							<img src="figures/DARS_2016/experiment/expt_varying_robots.png" alt="Experimental setup" title="Experimental setup" height="80%" width="100%">
+							<figcaption>Varying number of robots with deployment time of 180s</figcaption>
+						</div>	
+						<div style="position: absolute; left: 470px; height: 420px; width: 400px;">
+							<img src="figures/DARS_2016/experiment/expt_varying_time.png" alt="Experimental setup" title="Experimental setup" height="80%" width="100%">
+							<figcaption>Varying time of deployment with 4 robots</figcaption>
+						</div>					
+					</div>
+				</section>
+
+
+
+				<!-- RAL 2017 -->
+
+				<!-- Title -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+
+				<div class="heading_box">
+				<h3>A Probabilistic Approach to Constructing Topological Maps of an Environment<sup>*</sup></h3>
+				</div>	
+					<p align="left" style="font-size: 15px"><sup>*</sup>Ragesh K. Ramachandran, Sean. Wilson, and Spring. Berman. A probabilistic approach to automated construction of topological maps using a stochastic robotic swarm. IEEE Robotics and Automation Letters, 2(2):616–623, April 2017.</p>					
+				</section>
+
+
+				<!-- Problem Statement -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+						<h3> Problem Statement</h3>
+					<p> 
+				    We consider the problem of generating a topological map of a bounded, unknown, GPS-denied 2D environment using data collected by a swarm of N robots.
+					</p>
+					</div>	
+				</section>
+
+
+				<!-- Topological Map -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;"> 
+						<h3>Topological Map</h3>
+							<p>Topological maps are sparse roadmap representations of environments that can be used to identify collision-free trajectories for robots to navigate through a domain</p>
+							<p class="fragment">The topological map constructed here is in the form of a <span style="font-style: italic;">Generalized Voronoi Diagram (GVD)</span>. Due to the computational complexity of computing exact GVDs, algorithms have been developed to generate <span style="font-style: italic;">approximate GVDs (AGVDs)</span> 
+							</p>
+							<p class="fragment">A Voronoi diagram is a partitioning of a plane into regions based on distance to points in a specific subset of the plane.
+							</p>
+					</div>					
+				</section>
+
+
+				<!-- Voronoi Diagram Illustration -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;"> 
+						<h3>Voronoi Diagram Illustration</h3>
+							<div style="position: absolute; width: 800px; height: 450px; left: 80px;">
+							<img src="figures/background/Euclidean_Voronoi_diagram.png" alt="Euclidean_Voronoi_diagram example" title="Euclidean_Voronoi_diagram" height="70%" width="100%">
+							<figcaption><p style="font-size: 25px">Voronoi Diagram based on Euclidean distance<sup>1</sup></p></figcaption> 
+							<p align="left" style="font-size: 15px"><sup>1</sup>Taken from Wikipedia</p>
+							</div>
+					</div>					
+				</section>
+
+
+				<!-- Topological Map Illustration -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;"> 
+						<h3>Topological Map Illustration</h3>
+							<div style="position: absolute; width: 800px; height: 450px; left: 80px;">
+							<img src="figures/background/top-voronoi-diagram.jpg" alt="top-voronoi-diagram example" title="top-voronoi-diagram" height="70%" width="100%">
+							<figcaption><p style="font-size: 25px">Topological map of a domain with three obstacles<sup>1</sup></p></figcaption> 
+							<p align="left" style="font-size: 15px"><sup>1</sup>Taken from Dr.Markus Haid blog</p>
+							</div>	
+					</div>				
+				</section>
+
+
+
+				<!-- extension of DARS  -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;"> 
+					<h2>Extension of the Previous work</h2>
+					<h3>What more can be done?</h3>
+					<ul>
+						<li><p class="fragment fade-up">How to find an automated procedure to threshold the density function in order to isolate the obstacle region?</p></li>
+						<li><p class="fragment fade-up">Can we build a topological map of the domain?</p></li>
+					</ul>
+					</div>
+				</section>
+
+
+
+				<!-- COMPUTE THRESHOLD AND IDENTIFY NUMBER OF OBSTACLES  -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;"> 				
+					<h3>Compute Threshold And Identify Number Of Obstacles</h3>
+					<ul>
+						<li><p>A filtration is generated by the thresholding the probability map and constructing a simplicial complex at each level and choosing $\delta$ = 1 − threshold ($\alpha$) as the <span style="font-style: italic;">filtration parameter</span></p></li>
+						<li><p class="fragment fade-up">The barcode generated out of this filtration can be used to compute optimal threshold and identify number of obstacle.</p></li>
+					</ul>
+					</div>
+				</section>
+
+
+				<!-- Density Function Thresholding Based Filtration Illustration -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Density Function Thresholding Based on Filtration</h3>
+					<div style="font-size: 30px;"> 
+						<div style="position: absolute; width: 460px; height: 420px; left: 0px;">
+						<img src="figures/RAL_2017/2/world.png" alt="World" title="World" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px">Actual Domain</p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 460px; height: 420px; right: 0px;">
+						<img src="figures/RAL_2017/2/pdf_map.png" alt="PDF map" title="PDF map" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px">Computed density function </p></figcaption> 
+						</div>						
+					</div>
+				</section>
+
+
+
+				<!-- Density Function Thresholding Based Filtration Illustration 2-->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Density Function Thresholding Based on Filtration</h3>
+					<h4>Simplicial complex for each filtration value</h4>
+					<div style="font-size: 30px;"> 
+						<div style="position: absolute; width: 460px; height: 420px; left: 0px;">
+						<img src="figures/RAL_2017/2/filtration/fil_02.png" alt="filtration" title="filtration" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px">$\delta$ = 0.2</p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 460px; height: 420px; right: 0px;">
+						<img src="figures/RAL_2017/2/filtration/fil_03.png" alt="filtration" title="filtration" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px">$\delta$ = 0.3</p></figcaption> 
+						</div>						
+					</div>
+				</section>
+
+
+				<!-- Density Function Thresholding Based Filtration Illustration 3-->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Density Function Thresholding Based on Filtration</h3>
+					<h4>Simplicial complex for each filtration value</h4>
+					<div style="font-size: 30px;"> 
+						<div style="position: absolute; width: 460px; height: 420px; left: 0px;">
+						<img src="figures/RAL_2017/2/filtration/fil_04.png" alt="filtration" title="filtration" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px">$\delta$ = 0.4</p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 460px; height: 420px; right: 0px;">
+						<img src="figures/RAL_2017/2/filtration/fil_05.png" alt="filtration" title="filtration" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px">$\delta$ = 0.5</p></figcaption> 
+						</div>						
+					</div>
+				</section>
+
+
+
+				<!-- Density Function Thresholding Based Filtration Illustration 4-->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Density Function Thresholding Based on Filtration</h3>
+					<h4>Simplicial complex for each filtration value</h4>
+					<div style="font-size: 30px;"> 
+						<div style="position: absolute; width: 460px; height: 420px; left: 0px;">
+						<img src="figures/RAL_2017/2/filtration/fil_06.png" alt="filtration" title="filtration" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px">$\delta$ = 0.6</p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 460px; height: 420px; right: 0px;">
+						<img src="figures/RAL_2017/2/filtration/fil_08.png" alt="filtration" title="filtration" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px">$\delta$ = 0.8</p></figcaption> 
+						</div>						
+					</div>
+				</section>
+
+
+				<!-- The Barcode From The Filtration -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>The Barcode From The Filtration</h3>
+					<div style=" font-size: 30px;"> 
+						<img src="figures/RAL_2017/2/barcode.png" alt="barcode" title="barcode" height="300px" width="400px">
+						<figcaption>Barcode for the filtration. $\delta_{opt} = 0.6\ or\ \alpha_{opt} = 0.4$. Number of obstacles = 2, with one connected component in the domain </figcaption>
+					</div>
+				</section>
+
+
+				<!-- Obstacle Segmentation -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;"> 
+						<h3>Obstacle Segmentation</h3>
+					<ul>
+						<li><p class="fragment "> The grid cells with $p^f_i < \alpha_{opt}$ belong to an obstacle.</p></li>
+						<li><p class="fragment "> Classify the grid cells in each obstacle and identify its boundary.</p></li>
+						<li><p class="fragment "> A graph is constructed with obstacle grid cell centers as vertices and the cells are classified by performing a BFS on this graph</p></li>
+						<li><p class="fragment "> The boundaries of each obstacle are identified as the elements in graph that belong to the same obstacle and have fewer than four neighbors.</p></li>
+					</ul>
+					</div>					
+				</section>
+
+
+				<!-- Obstacle Segmentation Illustration -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+					<h3>Obstacle Segmentation Illustration</h3>					
+						<div style="position: absolute; width: 460px; height: 450px; left: 0px;">
+						<img src="figures/RAL_2017/3/world.png" alt="world" title="world" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px">Actual Domain</p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 460px; height: 450px; right: 0px;">
+						<img src="figures/RAL_2017/3/pdf_map.png" alt="filtration" title="filtration" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px">Density function computed</p></figcaption> 
+						</div>						
+					</div>
+				</section>
+
+
+
+				<!-- Obstacle Segmentation Illustration 2-->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;"> 
+					<h3>Obstacle Segmentation Illustration</h3>					
+						<div style="position: absolute; width: 460px; height: 450px; left: 0px;">
+						<img src="figures/RAL_2017/3/barcode.png" alt="Barcode" title="Barcode" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px">Barcode</p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 460px; height: 450px; right: 0px;">
+						<img src="figures/RAL_2017/3/segmented.png" alt="segmented" title="segmented" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px">Segmented Obstacles and their Boundaries. The boundary is shown in black.</p></figcaption> 
+						</div>						
+					</div>
+				</section>
+
+
+
+				<!-- Topological Map Generation -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+						<h3>Topological Map Generation</h3>
+					<ul>
+						<li><p class="fragment ">A wave propagation algorithm is used to generate the approximate Generalized Voronoi Diagram(AGVD).</p></li>
+						<li><p class="fragment ">A graph is constructed in the same manner as the obstacle graph.</p></li>
+						<li><p class="fragment ">The algorithm is a modified form of Dijkstra's algorithm.</p></li>
+						<li><p class="fragment "> The algorithm outputs the set of vertices which constitutes the topological map of the domain in the form of a discrete AGVD.</p></li>
+					</ul>
+					</div>					
+				</section>
+
+
+				<!-- Topological Map Video -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%">					
+						<h3>Topological Map Video</h3>
+						<video width = "960px" height = "400px" controls>
+							<source src="videos/Voronoi_animation_3_obstacle.mp4" type="video/mp4"/>
+						</video>					
+										
+				</section>				
+
+
+				<!-- Topological Map Results -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;"> 
+					<h3>Topological Map Results</h3>					
+						<div style="position: absolute; width: 460px; height: 450px; left: 0px;">
+						<img src="figures/RAL_2017/1/topological_map.png" alt="topological_map" title="topological_map" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px">One Obstacle</p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 460px; height: 450px; right: 0px;">
+						<img src="figures/RAL_2017/2/topological_map.png" alt="topological_map" title="topological_map" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px">Two Obstacles</p></figcaption> 
+						</div>						
+					</div>
+				</section>
+
+
+				<!-- Topological Map Results 2-->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;"> 
+					<h3>Topological Map Results</h3>					
+						<div style="position: absolute; width: 460px; height: 450px; left: 0px;">
+						<img src="figures/RAL_2017/3/topological_map.png" alt="topological_map" title="topological_map" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px">Three Obstacles</p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 460px; height: 450px; right: 0px;">
+						<img src="figures/RAL_2017/4/topological_map.png" alt="topological_map" title="topological_map" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px">Four Obstacles</p></figcaption> 
+						</div>						
+					</div>
+				</section>
+
+
+				<!-- Experimental Illustration-->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;"> 
+					<h3>Experimental Illustration</h3>					
+						<div style="position: absolute; width: 460px; height: 450px; left: 0px;">
+						<img src="figures/RAL_2017/experiment/setup.png" alt="setup" title="setup" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px">Experimental Setup with Pheeno robot platform<sup>1</sup></p></figcaption> 
+						<p align="left" style="font-size: 15px"><sup>1</sup>Sean Wilson et al., IEEE R-AL, July 2016</p>
+						</div>
+						<div style="position: absolute; width: 460px; height: 450px; right: 0px;">
+						<img src="figures/RAL_2017/experiment/combined_map.png" alt="combined map" title="combined map" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px">Map Overlaid on the Arena</p></figcaption> 
+						</div>						
+					</div>
+				</section>
+
+
+				<!-- Computational Complexity -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;"> 
+						<h3>Computational Complexity</h3>
+					<ul>
+						<li><p><span style="font-weight: bold;">Probability map generation:</span> $\mathcal{O}(NKM)$, where $N$ robots each collect $K$ items of data over a domain that is discretized into $M$ grid cells.</p></li>
+						<li><p><span style="font-weight: bold;">Simplicial complex construction and barcode generation :</span> $\mathcal{O}(M^{2.372})$, but for most practical applications it is close to $\mathcal{O}(M)$.</p></li>						
+						<li><p><span style="font-weight: bold;">Obstacle segmentation :</span> $\mathcal{O}(M)$.</p></li>
+						<li><p><span style="font-weight: bold;">AGVD extraction using the wave propagation algorithm :</span>$\mathcal{O}(M\log{M})$.</p></li>
+						<li><p><span style="font-weight: bold;">Worst case complexity of the approach :</span> $\mathcal{O}(M^{2.372})$.</p></li>
+					</ul>
+					</div>					
+				</section>
+
+
+				<!-- RAL 2018 ******************************** -->
+
+				<!-- Title -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+
+					<div class="heading_box"><h3>Metric Map Construction using a Stochastic Robotic Swarm Leveraging Received Signal Strength<sup>*</sup></h3></div>
+					<p align="left" style="font-size: 15px"><sup>*</sup>Ragesh K. Ramachandran and Spring Berman. Automated Construction of Metric Maps using a Stochastic Robotic Swarm Leveraging Received Signal Strength. Submitted to IEEE Robotics and Automation Letters, 2018.</p>					
+				</section>
+
+
+				<!-- Problem Statement -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+						<h3> Problem Statement</h3>
+					<p> 
+				    We consider the problem of generating a metric map of a bounded, unknown, GPS-denied 2D environment using data collected by a swarm of N robots.
+					</p>
+					</div>	
+				</section>
+
+
+				<!-- extension of RAL 2017  -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;"> 
+					<h3>Extension of the Previous work</h3>
+					<ul>
+						<li><p class="fragment fade-up">A robots are equipped with receivers to receive broad casted signals(wifi, bluetooth). </p></li>
+						<li><p class="fragment fade-up">A mapping procedure is similar to the previous one, which is computing $p^f_i$ for each grid cell.</p></li>
+						<li><p class="fragment fade-up">We prove the completeness of the mapping approach.</p></li>
+					</ul>
+					</div>
+				</section>
+
+
+				<!-- Updated Measurement Model  -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;"> 
+					<h3>Updated Measurement Model</h3>
+						$$\mathbf{Z}(t) = \begin{bmatrix}
+						\mathbf{S}(\mathbf{X}(t))\\ 
+						\mathbf{V}(t)
+						\end{bmatrix}
+						+
+						\begin{bmatrix}
+						\mathbf{N}_S(t)\\ 
+						\mathbf{N}_V(t)
+						\end{bmatrix}$$
+						<p>$\mathbf{S}(\mathbf{X}(t)) = [S_1(\mathbf{X}(t)), ~...,~ S_l(\mathbf{X}(t))]^T$, $l$ number of transmitters(here $l = 2$).</p>						
+						<p>$S_i(\mathbf{X}(t)) = K_i Pow_i ||\mathbf{X}(t) - \mathbf{X}_i||^{-\alpha}$, where $\alpha \in [0.1, 2]$, $Pow_i$ is the transmitted signal voltage of transmitter $i$</p>
+						<p>$\mathbf{N}_S(t) \in \mathbb{R}^l$ and $\mathbf{N}_V(t) \in \mathbb{R}^2$ as vectors of independent, zero-mean normal random variables.</p>
+						<p class="fragment fade-up" style="font-style: italic; color: #914BF1"> Extended Kalman filter used.</p>
+					</div>
+					<aside class="notes">
+						Explain the procedure with the received signal strength.
+						
+					</aside>
+				</section>
+
+
+				<!-- Completeness of the Approach-->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">
+					<h3>Completeness of the Approach</h3>
+						<div class="center-justified" style="font-size: 25px;"> 
+						<p><em>Lemma:</em> The error in the robots' position estimates is uniformly bounded, with a common bound for all robots, if each robot follows the previously mentioned motion model and estimates its state vector using an extended Kalman filter based on the outputs in $\mathbf{Z}(t)$.</p>
+						</div>
+						<p class="fragment fade-up">Finally, we prove the existence of a threshold value of $p_{i}^{f}$ that distinguishes the free grid cells from the occupied cells.</p>
+						<div class="center-justified" style="font-size: 25px;"> 
+						<p class="fragment fade-up"><em>Theorem:</em> Under the assumption of complete coverage of the domain, a grid cell $m_i$ is free if and only if there exists a threshold $\gamma \in [0, 1]$ for which $p_{i}^{f} > \gamma$.</p>
+						</div>
+					</div>
+				</section>
+
+
+				<!-- Results 1 -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">			
+					<div style="position: relative; top: 0px"><h4>Actual Domain</h4></div>
+					<div class="grid-container5">
+						<div class="item1"><img src="figures/RAL_2018/0/world.png" alt="PDF with 0 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item2"><img src="figures/RAL_2018/1/world.png" alt="PDF with 1 with 0 obstacle" title="Actual map" height="100%" width="100%"></div>
+						<div class="item3"><img src="figures/RAL_2018/2/world.png" alt="PDF with 2 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item4"><img src="figures/RAL_2018/3/world.png" alt="PDF with 3 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item5"><img src="figures/RAL_2018/4/world.png" alt="PDF with 4 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+					</div>
+
+					<div style="position: relative; top: 25px"><h4>Probability map</h4></div>
+
+					<div class="grid-container5">
+						<div class="item1"><img src="figures/RAL_2018/0/Filtered_pdf.png" alt="PDF with 0 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">No features</p></figcaption></div>
+						<div class="item2"><img src="figures/RAL_2018/1/Filtered_pdf.png" alt="PDF with 1 with 0 obstacle" title="Actual map" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">One feature</p></figcaption></div>
+						<div class="item3"><img src="figures/RAL_2018/2/Filtered_pdf.png" alt="PDF with 2 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">Two features</p></figcaption></div>
+						<div class="item4"><img src="figures/RAL_2018/3/Filtered_pdf.png" alt="PDF with 3 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">Three features</p></figcaption></div>
+						<div class="item5"><img src="figures/RAL_2018/4/Filtered_pdf.png" alt="PDF with 4 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">Four features</p></figcaption></div>
+					</div>
+					</div>
+				</section>
+
+
+				<!-- Results 2 -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">			
+					<div style="position: relative; top: 0px"><h4>Thresholded map</h4></div>
+					<div class="grid-container5">
+						<div class="item1"><img src="figures/RAL_2018/0/map.png" alt="PDF with 0 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item2"><img src="figures/RAL_2018/1/map.png" alt="PDF with 1 with 0 obstacle" title="Actual map" height="100%" width="100%"></div>
+						<div class="item3"><img src="figures/RAL_2018/2/map.png" alt="PDF with 2 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item4"><img src="figures/RAL_2018/3/map.png" alt="PDF with 3 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+						<div class="item5"><img src="figures/RAL_2018/4/map.png" alt="PDF with 4 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
+					</div>
+
+					<div style="position: relative; top: 25px"><h4>Absolute Value error</h4></div>
+
+					<div class="grid-container5">
+						<div class="item1"><img src="figures/RAL_2018/0/error.png" alt="PDF with 0 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">No features</p></figcaption></div>
+						<div class="item2"><img src="figures/RAL_2018/1/error.png" alt="PDF with 1 with 0 obstacle" title="Actual map" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">One feature</p></figcaption></div>
+						<div class="item3"><img src="figures/RAL_2018/2/error.png" alt="PDF with 2 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">Two features</p></figcaption></div>
+						<div class="item4"><img src="figures/RAL_2018/3/error.png" alt="PDF with 3 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">Three features</p></figcaption></div>
+						<div class="item5"><img src="figures/RAL_2018/4/error.png" alt="PDF with 4 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
+						<figcaption><p style="font-size: 25px">Four features</p></figcaption></div>
+					</div>
+					</div>
+				</section>
+
+
+				<!-- Results for complex domain -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;">			
+					<h4>Large Complex domain</h4>					
+
+					<div class="grid-container3">
+						<div class="item1"><img src="figures/RAL_2018/complex/world.png" alt="PDF with 0 obstacle" title="$p^f_i$ contour plot" height="75%" width="100%">
+						<figcaption><p style="font-size: 25px">Domain</p></figcaption></div>
+						<div class="item2"><img src="figures/RAL_2018/complex/map.png" alt="PDF with 1 with 0 obstacle" title="Actual map" height="75%" width="100%">
+						<figcaption><p style="font-size: 25px">Map</p></figcaption></div>
+						<div class="item3"><img src="figures/RAL_2018/complex/error.png" alt="PDF with 2 obstacle" title="$p^f_i$ contour plot" height="75%" width="100%">
+						<figcaption><p style="font-size: 25px">Absolute Value of error</p></figcaption></div>												
+					</div>
+					<p style="position: relative; top: 0px; font-size: 20px">Complex domain of size $20 m \times 20 m$, in which $N = 200$ robots were deployed for $T = 1200 s$</p>
+					</div>
+					<aside class="notes">
+						Talk about the small gap between the lines.
+					</aside>
+				</section>
+
+
+				<!-- varying time of deployment -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h4>Effect of varying time of deployment</h4>
+					<div style="font-size: 25px;">
+					<div style="position: absolute; left: 50px; height: 420px; width: 400px;">
+							<img src="figures/RAL_2018/variation/time/Estimation_error_on_various_domains_with_varying_time_size_50_trails_each.png" alt="Experimental setup" title="Experimental setup" height="75%" width="100%">
+							<figcaption>Estimation error with 40 robots</figcaption>
+					</div>	
+					<div style="position: absolute; left: 470px; height: 420px; width: 400px;">
+							<img src="figures/RAL_2018/variation/time/Threshold_on_various_domains_with_varying_time_50_trails_each.png" alt="Experimental setup" title="Experimental setup" height="75%" width="100%">
+							<figcaption>Threshold with deployment 40 robots</figcaption>
+					</div>	
+					<div style="position: relative; top: 470px"><p>50 trails for each time of deployment.</p></div>
+					</div>					
+				</section>
+
+
+				<!-- varying number of robots -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h4>Effect of varying number of robots</h4>
+					<div style="font-size: 25px;">
+					<div style="position: absolute; left: 50px; height: 420px; width: 400px;">
+							<img src="figures/RAL_2018/variation/no_of_robots/low/Estimation_error_on_various_domains_with_varying_robot_size_50_trails_each.png" alt="Experimental setup" title="Experimental setup" height="75%" width="100%">
+							<figcaption>Estimation error with deployment time of 180s</figcaption>
+					</div>	
+					<div style="position: absolute; left: 470px; height: 420px; width: 400px;">
+							<img src="figures/RAL_2018/variation/no_of_robots/low/Threshold_on_various_domains_with_varying_robot_size_50_trails_each.png" alt="Experimental setup" title="Experimental setup" height="75%" width="100%">
+							<figcaption>Threshold with deployment time of 180s</figcaption>
+					</div>	
+					<div style="position: relative; top: 470px"><p>50 trails for each number of robots.</p></div>
+					</div>				
+				</section>
+
+
+
+				<!-- ACC 2017 ************* -->
+
+
+				<!-- Title -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+
+					<div class="heading_box"><h3>Scalar Field Estimation by Large Networks with Partially Accessible Measurements<sup>*</sup></h3></div>
+					<p align="left" style="font-size: 15px"><sup>*</sup>Ragesh K. Ramachandran and Spring Berman. The effect of communication topology on scalar field estimation by large networks with partially accessible measurements. In Proceedings of the 2017 American Control Conference (ACC), Seattle, WA, USA, May 24–26, 2017.</p>					
+				</section>
+
+
+				<!-- 2. Research Focus slide -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+				<h2>Problem Statement</h2>
+				<div style="font-size: 30px;"> 
+				<p> 
+				    We consider the problem of reconstructing a two-dimensional scalar field using measurements from a subset of a network with local communication between nodes.
+				</p>
+				<p class="fragment" style="font-weight: bold; font-style: italic;">
+					The main focus of the research is a derivation of bounds on the trace of the observability Gramian of the system, which can be used to quantify and compare the field estimation capabilities of chain and grid networks.
+				</p>
+				<p class="fragment" style="font-weight: bold; font-style: italic;">
+					A comparison based on a performance measure related to the $H^2$ norm of the system is also used to study the robustness of the network topologies.
+				</p>
+				</div>
+				</section>
+
+
+				<!-- Motivation Slide -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Motivation & Related work</h3>
+					<div style="font-size: 30px;"> 
+					<ul>
+						<li><p>Solution to estimation problem is associated with the observability of the system.</p></li>
+						<li><p class="fragment">Little work on estimation of initial conditions other than through the inversion of the observability Gramian</p></li>
+						<li><p class="fragment">Checking the rank condition for large interconnected systems is computationally ill-conditioned due to the high dimensionality of the observability Gramian.</p></li>
+						<li><p class="fragment">A graph-theoretic characterization of observability has been more widely used than a matrix-theoretic characterization for large complex networked systems.</p></li>											
+					</ul>
+					</div>
+				</section>
+
+
+				<!-- Motivation Slide part 2-->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<!-- h2>Motivation</h2 -->
+					<div style="font-size: 30px;"> 
+					<ul>
+						<li><p>The observability of complex networks is studied in <span style="color: #129cea">Yang-Yu Liu et al.(2013)</span> using structural observability, which presents a general result that holds true for most of the chosen network parameters (the edge weights).</p></li>
+						<li><p class="fragment">In <span style="color: #129cea">Meng Ji et al.(2007)</span>, a graph-theoretic approach based on equitable partitions of graphs is used to derive necessary conditions for observability of networks</p></li>
+						<li><p class="fragment">Alternately, <span style="color: #129cea">Zhengzhong Yuan et al.(2013)</span> uses a matrix-theoretic approach to develop a maximum multiplicity theory to characterize the exact controllability of a network based on the network spectrum.</p></li>			
+					</ul>
+					</div>
+				</section>
+
+
+				<!-- Problem Statement -->
+
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Problem Statement</h3>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+					<ul>
+						<li><p>Consider a set of N nodes with local communication ranges and local sensing capabilities.</p></li>
+						<li><p class="fragment">Each node is capable of measuring the value of a scalar field at its location and communicating this value to its neighbors</p></li>
+						<li><p class="fragment">The nodes take measurements at some initial time and transmit this information using a nearest-neighbor averaging rule</p></li>
+						<li><p class="fragment"> The problem is to reconstruct the initial measurements taken by all the nodes from the measurements of a subset of accessible nodes.</p></li>
+					</ul>
+					</div>
+				</section>
+
+				<!-- Illustration -->
+
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>					
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+						<div style="position: absolute; width: 460px; height: 450px; left: 0px;">
+						<img src="figures/background/field_chain.png" alt="Chain topology example" title="Chain topology example" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px"><u>Chain topology</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 460px; height: 450px; right: 0px;">
+						<img src="figures/background/field_grid.png" alt="Grid topology example" title="Grid topology example" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px"><u>Grid topology</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 960px; height: 50px; bottom: 0px; font-size: 25px; font-style: italic;">
+						<p>Illustration of the chain and grid network topologies. The <span style="color: rgb(60, 180, 223);">blue circles</span> are nodes and are labeled by numbers. Nodes in the <span style="color: #F0EB51">yellow region</span> are accessible nodes.</p>
+						</div>
+					</div>
+				</section>
+
+
+				<!-- System dynamics -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>System dynamics</h3>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+					<p>
+						We define the information flow dynamics of node $i$ as:
+						$$\frac{dx_i}{dt} = \sum_{(i, j) \in \mathcal{N}_i } (x_j-x_i)$$
+						$\mathcal{N}_i$ denote the set of neighbors of node $i$. 
+					</p>
+					<p class="fragment">
+						The information flow dynamics over the entire network becomes : 
+						$$\dot{\mathbf{X}}(t) = - \mathbf{L}(\mathcal{G}) \mathbf{X}(t),  \mathbf{Y}(t) =  \mathbf{C} \mathbf{X}(t)$$
+						$$\mathbf{X}(0) = \mathbf{X}_0.$$
+						$\mathbf{L}(\mathcal{G})$ denote the Laplacian of the graph. $\mathbf{Y}(t)$ is the measurement vector at time $t$.
+					</p>					
+				</section>
+
+
+				<!-- SCALAR FIELD RECONSTRUCTION -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Scalar Field Reconstruction</h3>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+						<p>We solve the scalar field reconstruction problem by posing it as an optimization problem. We  frame our optimization objective as the computation of $ \mathbf{X}_0$ that minimizes the functional $J(\mathbf{X}_0)$, defined as : </p>
+						$$J(\mathbf{X}_0) = \frac{1}{2}\int_{0}^{T}\left \| \mathbf{Y}(t) - \hat{\mathbf{Y}}(t) \right \|_2^2 dt + \frac{\lambda}{2}\left \| \mathbf{X}_0 \right \|^2$$
+						<p>subject to the constraint of the system dynamics. $\hat{\mathbf{Y}}(t)$ is the observed data.</p>
+						<p>The convexity of  $J(\mathbf{X}_0)$ ensures the convergence of gradient descent methods to its global minima.</p>
+					</div>
+				</section>
+
+
+				<!-- Gradient computation -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Gradient Computation</h3>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+						<p>The gradient can be computed as :</p>
+						$$\delta J(\mathbf{X}_0) = P(T) + \lambda \mathbf{X}_0$$
+						<p>We find $P(T)$ by solving following equation forward : </p>
+						$$\frac{dP}{d\tau} =  - \mathbf{L}^*(\mathcal{G})P(\tau) + \mathbf{C}^*\hat{u}(\tau), ~~~P(0) = 0$$
+						<p>Where $\hat{u}(\tau) \equiv \mathbf{Y}(T - \tau) - \hat{\mathbf{Y}}(T - \tau)$</p>
+						<p>$\mathbf{L}^*(\mathcal{G})$ and $\mathbf{C}^*$ are transposes of $\mathbf{L}(\mathcal{G})$ and $\mathbf{C}$ respectively</p>
+					</div>
+				</section>
+
+
+				<!-- SIMULATIONS Chain Topology -->
+                <section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Simulation: Chain Topology</h3>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+						<div style="position: absolute; width: 300px; height: 450px; left: 0px; font-size: 30px;"> 
+							<img src="figures/ACC_2017/estimate/actual_chain_gaussian_t_50_30_100_contour.png" alt="Actual field" title="Actual Field" height="70%" width="100%">
+							<figcaption><p style="font-size: 25px"><u>Actual field</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 300px; height: 450px; left: 350px; font-size: 30px;"> 
+							<img src="figures/ACC_2017/estimate/estimated_chain_gaussian_t_50_30_100_contour.png" alt="Estimated field" title="Estimated Field" height="70%" width="100%">
+							<figcaption><p style="font-size: 25px"><u>Estimated field</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 300px; height: 450px; right: 0px; font-size: 30px;"> 
+							<img src="figures/ACC_2017/estimate/error_chain_gaussian_t_50_30_100_contour.png" alt="Absolute value of error" title="Absolute value of error" height="70%" width="100%">
+							<figcaption><p style="font-size: 25px"><u>Absolute value of error</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 960px; height: 50px; bottom: 0px; font-size: 25px; font-style: italic;">
+						<p>Gaussian function estimation using 100 nodes with a chain communication topology. Temporal data is acquired from 30 nodes over a time period of 50 sec.</p>						
+						</div>
+					</div>
+				</section>
+
+
+				<!-- SIMULATIONS grid Topology -->
+                <section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Simulation: Grid Topology</h3>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+						<div style="position: absolute; width: 300px; height: 450px; left: 0px; font-size: 30px;"> 
+							<img src="figures/ACC_2017/estimate/actual_grid_gaussian_t_50_30_100_contour.png" alt="Actual field" title="Actual Field" height="70%" width="100%">
+							<figcaption><p style="font-size: 25px"><u>Actual field</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 300px; height: 450px; left: 350px; font-size: 30px;"> 
+							<img src="figures/ACC_2017/estimate/estimated_grid_gaussian_t_50_30_100_contour.png" alt="Estimated field" title="Estimated Field" height="70%" width="100%">
+							<figcaption><p style="font-size: 25px"><u>Estimated field</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 300px; height: 450px; right: 0px; font-size: 30px;"> 
+							<img src="figures/ACC_2017/estimate/error_grid_gaussian_t_50_30_100_contour.png" alt="Absolute value of error" title="Absolute value of error" height="70%" width="100%">
+							<figcaption><p style="font-size: 25px"><u>Absolute value of error</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 960px; height: 50px; bottom: 0px; font-size: 25px; font-style: italic;">
+						<p>Gaussian function estimation using 100 nodes with a grid communication topology. Temporal data is acquired from 30 nodes over a time period of 50 sec.</p>						
+						</div>
+					</div>
+				</section>
+
+
+				<!-- SIMULATIONS ocean saline data -->
+                <section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h4>Simulation Using Ocean Salinity Data</h4>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+						<div style="position: absolute; width: 300px; height: 420px; left: 0px; font-size: 30px;"> 
+							<img src="figures/ACC_2017/estimate/actual_grid_gaussian_t_50_30_100_contour_salinity.png" alt="Actual salinity field" title="$Actual salinity Field" height="70%" width="100%">
+							<figcaption><p style="font-size: 25px"><u>Actual salinity field</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 300px; height: 420px; left: 350px; font-size: 30px;"> 
+							<img src="figures/ACC_2017/estimate/estimated_grid_gaussian_t_50_30_100_contour_salinity.png" alt="Estimated salinity field" title="Estimated salinity Field" height="70%" width="100%">
+							<figcaption><p style="font-size: 25px"><u>Estimated salinity field</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 300px; height: 420px; right: 0px; font-size: 30px;"> 
+							<img src="figures/ACC_2017/estimate/error_grid_gaussian_t_50_30_100_contour_salinity.png" alt="Absolute value of error" title="Absolute value of error" height="70%" width="100%">
+							<figcaption><p style="font-size: 25px"><u>Absolute value of error</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; top: 420px; font-size: 25px; font-style: italic;">
+						<p>Estimation of salinity (psu) over a section of the Atlantic Ocean at a depth of $25$ m. The network consists of 100 nodes with a grid communication topology. Temporal data is acquired from 30 nodes over a time period of 50 sec.</p>						
+						</div>
+					</div>
+					<aside class="notes">The data from NOAA National Oceanic and Atmospheric Administration.</aside>
+				</section>
+
+
+				<!-- EFFECT OF NETWORK TOPOLOGY ON ESTIMATION PERFORMANCE -->
+                <section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Effect Of Network Topology On Estimation Performance</h3>
+					<div style="font-size: 30px;"> 
+						<ul>
+							<li><p>Comparing the chain and grid results, it is evident that there is some fundamental limitation arising from the network structure which makes the system with the chain topology practically unobservable.</p></li>
+							<li><p class="fragment"><em>Degree of observability</em> is used as a metric to study effect of network structure.</p></li>
+							<li><p class="fragment">Commonly used measures of the degree of observability (controllability) are the smallest eigenvalue, the trace, the determinant, and the condition number of the observability (controllability) Gramian</p></li>							
+						</ul>
+					</div>
+				</section>
+
+
+				<!-- Continuing slide -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="font-size: 30px;"> 
+						<ul>
+							<li><p>For large, sparse networked systems, the Gramian can be highly ill-conditioned, which makes numerical computation of its minimum eigenvalue unstable.</p></li>
+							<li><p class="fragment">We use the trace of the observability Gramian which can be interpreted as the average sensing effort required to estimate its initial state.</p></li>
+							<li><p class="fragment">We compute the estimate on the trace of the observability Gramian in form of upper and lower bounds.</p></li>
+							<li><p class="fragment">We compared the chain and grid topology using the bounds on the trace.</p></li>
+						</ul>
+				</section>
+
+
+				<!-- Theorem -->
+                <section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Upper And Lower Bounds On Trace Of The Observability Gramian</h3>
+					<div class="center-justified" style="font-size: 25px;"> 
+						<p><em>Theorem:</em> Let $\mathcal{G}$ be an unweighted, undirected graph that represents the communication network of a set of $N$ nodes with information dynamics and output map.  If we label $\mathit{V(\mathcal{G})} $ such that  $k \leq N$  sensor nodes in  $\mathit{V(\mathcal{G})} $ are labeled as $1, 2, ..., k$, then $\mathbf{C} = \left[ \mathbf{I}_{k \times k}\ \mathbf{0}_{k \times (N - k)} \right]$. Assuming that $\mathbf{L}(\mathcal{G})$ is diagonalizable and that $\lambda_1 \geq \lambda_2 \geq ... \geq \lambda_N $ are its eigenvalues,  there exist real constants $c_1 \leq c_2 \leq ... \leq c_N$ such that</p>
+						$$\sum_{i=1}^{k} c_i  ~\leq ~Trace\left( \mathit{W}_O(0,T) \right) ~\leq~ \sum_{i=0}^{k-1} c_{N-i}$$
+						<p>where $c_i = \int^{T}_{0} e^{-2\lambda_i t} dt$.</p>
+					</div>
+				</section>		
+
+
+				<!-- Compute upper bounds -->
+                <section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h4>Estimate the Trace For Chain And Grid</h4>
+					<div class="center-justified" style="font-size: 25px;"> 
+						<p>Let $\lambda_{N-i}^{c}$ and $\lambda_{N-i}^{g}$ denote the $(N-i)^{th}$ eigenvalue of  $\mathbf{L}(\mathcal{G}_c)$ and $\mathbf{L}(\mathcal{G}_g)$, respectively.</p>
+						<p class="fragment">Then, $\lambda_{N-i}^{c} = 4\sin^2 \left(\frac{\pi i}{2N} \right)$ and $\lambda_{N-i}^{g} = 4\sin^2 \left(\frac{\pi i}{2\sqrt{N}} \right)$ for $i \in \{0, 1, ..., k-1\}$,  $k < \sqrt{N}$.</p>
+						<p class="fragment">Applying the theorem, we get the <em>upper bound</em> on $Trace\left( \mathit{W}_O(0,T) \right)$ for the <em>chain network</em> as.
+						$$T + \frac{N^2}{2\pi^2 } \left (\sum_{i=1}^{k-1}\frac{1 -e^{-2\frac{\pi^2 i^2}{N^2}T}}{i^2} \right)\ (Scales\ quadratically\ in\ N)$$</p>
+						<p class="fragment">Similarly for the <em>grid network</em> we get, 
+						$$T + \frac{N}{2\pi^2 } \left ( \sum_{i=1}^{k-1}\frac{1 -e^{-2\frac{\pi^2 i^2}{N}T}}{i^2} \right )\ (Scales\ linearly\ in\ N)$$</p>
+					</div>
+				</section>
+
+
+				<!-- chain grid limits -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h4>Comparison of the degree of observability</h4>
+					<div style="font-size: 30px;"> 
+						<div style="position: absolute; width: 460px; height: 420px; left: 0px;">
+						<img src="figures/ACC_2017/compare/bounds_trace_100_nodes.png" alt="Networks with 100 nodes" title="Networks with 100 nodes" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px"><u>Networks with 100 nodes</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 460px; height: 420px; right: 0px;">
+						<img src="figures/ACC_2017/compare/bounds_trace_10000_nodes.png" alt="Networks with 10000 nodes" title="Networks with 10000 nodes" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px"><u>Networks with 10000 nodes</u></p></figcaption> 
+						</div>
+						<div style="position: relative;width: 960px; height: 50px; top: 430px; font-size: 25px; font-style: italic;">
+						<p>Comparison of the degree of observability based on the trace of the observability Gramian and its bounds. The trace is computed numerically using the eigenvalues of $\mathbf{L}(\mathcal{G})$.</p>
+						</div>
+					</div>
+				</section>
+
+
+				<!-- EFFECT OF NETWORK TOPOLOGY ON ROBUSTNESS TO NOISE -->
+                <section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Effect Of Network Topology On Robustness To Noise</h3>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+						<ul>
+							<li><p>We analyze the effect of noise on the output of first-order linear dynamics that evolve on chain and grid network topologies.</p></li>
+							<li><p class="fragment">The $\mathcal{H}_2$ norm of a system gives the steady-state variance of the output when the input to the system is white noise and when the system is Hurwitz.</p></li>
+							<li><p class="fragment">For unstable systems, the finite steady-state variance can be computed only when the unstable modes are unobservable from the outputs.</p></li>							
+						</ul>
+					</div>
+				</section>
+
+
+				<!-- EFFECT OF NETWORK TOPOLOGY ON ROBUSTNESS TO NOISE part 2-->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<!-- h2>Motivation</h2 -->
+					<div style="position: absolute; width: 960px; height: 550px; left: 0px; font-size: 25px;"> 
+					<ul>
+						<li><p>Consider the augmented system dynamics written as, $$\dot{\mathbf{X}}(t) = - \mathbf{L}(\mathcal{G}) \mathbf{X}(t) + \mathit{W}$$ where $\mathit{W} \in \mathbf{R}^N$ denotes a zero mean, unit covariance white noise process. </p></li>
+						<li><p class="fragment"> We can make the zero mode unobservable, in order to use the $\mathcal{H}_2 $ norm as a measure to quantify the effect of noise on the system output</p></li>
+						<li><p class="fragment">Following the approach in <span style="color: #129cea">Milad Siami et al.(2014)</span> We make the zero mode unobservable by choosing the matrix $\mathbf{C}$ which annihilates the vector $\mathbf{1}_N$.</p></li>
+						<li><p class="fragment">The $\mathcal{H}_2 $ norm, denoted as $\mathcal{H}_{\mathcal{K}_N} ^{(1)}(\mathbf{L}(\mathcal{G}))$, for a chosen $ \mathbf{C} $ can be defined from as $$\mathcal{H}_{\mathcal{K}_N} ^{(1)}(\mathbf{L}(\mathcal{G})) = \sum_{i = 1}^{N-1}\frac{1}{2\lambda_i}$$ where $\lambda_1 \geq \lambda_2 \geq ... \geq \lambda_N = 0 $ are the eigenvalues of  $\mathbf{L}(\mathcal{G})$.</p></li>											
+					</ul>
+					</div>
+				</section>
+
+
+				<!-- Performance plot -->
+                <section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+						<img src="figures/ACC_2017/performance/First_laplacian_energy.png" alt="First laplacian energy" title="First laplacian energy" height="80%" width="80%">
+						<figcaption><p style="font-size: 25px"><u>First order Laplacian energy</u></p></figcaption> 
+					</div>
+				</section>
+
+
+				<!-- Ongoing Work -->
+
+				<!-- Title -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+
+					<h3>Ongoing work</h3>
+					
+				</section>
+
+
+				<!-- Experimental Validation of Reaction-Based Mapping with Nanoparticle Swarms -->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Experimental Validation of Reaction-Based Mapping with Nanoparticle Swarms</h3>
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 25px;"> 
+					<ul>
+						<li><p>We are collaborating with Prof. Sabine Hauert, director of the Bristol Robotics Laboratory at the University of Bristol, to experimentally validate the PDE based mapping strategy.</p></li>
+						<li><p class="fragment">The primary goal is to estimate the distance of the obstacle from the entrance to a microfluidic channel using observations of the nanoparticles over time.</p></li>
+						<li><p class="fragment">To implement the mapping strategy, the nanoparticles will need to be engineered to adhere to the obstacle upon contact.</p></li>
+						<li><p class="fragment">The number of “active” nanoparticles over time will need to be counted using image processing software</p></li>						
+					</ul>
+					</div>					
+				</section>
+
+
+				<!-- Experimental Validation of Reaction-Based Mapping with Nanoparticle Swarms Illustration-->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>					
+					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
+						<div style="position: absolute; width: 460px; height: 450px; left: 0px;">
+						<img src="figures/Future_work/CIRCLE_COMBO_bw_marked.png" alt="Circular obstacle" title="Circular obstacle" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px"><u>Circular obstacle</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 460px; height: 450px; right: 0px;">
+						<img src="figures/Future_work/CIRCLE_COMBO_red_nano_marked.png" alt="Nanoparticles" title="Nanoparticles" height="70%" width="100%">
+						<figcaption><p style="font-size: 25px"><u>Nanoparticles near the circular obstacle</u></p></figcaption> 
+						</div>
+						<div style="position: absolute; width: 960px; height: 50px; bottom: 0px; font-size: 25px; font-style: italic;">
+						<p>Grayscale image of a circular obstacle in a microfluidic channel, as seen under an electron microscope.  2$\mu$m Nanoparticles (in red) near the obstacle. The images are from the Bristol Robotics Laboratory.</p>
+						</div>
+					</div>
+				</section>
+
+
+				<!-- Experimental Validation of metric mapping-->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Experimental Validation of mapping strategy using our robotic platform</h3>
+					<ul>
+						<li><p>We are experimentally validate the received signal strength mapping strategy.</p></li>
+						<li><p class="fragment">Planning to use on board wifi and bluetooth as signal.</p></li>
+						<li><p class="fragment">Also working on developing a bio-inspired coverage strategy.</p></li>
+					</ul>
+					<aside class="notes">
+						This requires calibration and identification parameter identification of the signal model.
+						Based on how Dictyostelium amoeba search food in the absence of any cues about it.
+						Some analysis based on Gaussian process on manifold.
+
+					</aside>					
+
+				</section>
+
+
+				<!-- Future work-->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>
+					<h3>Future work</h3>
+					<ul>
+						<li><p>Extending the network theory work for network topology estimation using ideas from information geometry.</p></li>
+						<li><p class="fragment">Distributed Multi Target Tracking based on random finite sets.</p></li>
+					</ul>
+					<aside class="notes">
+						The space of Laplacians form a semi-group. The search the space w.r.t a reasonable objective function based on data.						
+
+					</aside>					
+
+				</section>
+
+
+
+				<!-- ENDING SLIDE-->
+				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" data-background-interactive>		
+					<h4>THANK YOU</h4>			
+					<div style="font-size: 30px;"> 
+						<img src="figures/group_pic/groupPic.jpg" alt="Lab group picture" title="Lab group picture" height="80%" width="100%">			
+						<p>OUR GROUP AT ASU</p>
+						</div>
+					</div>
+				</section>
+
+
+
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+
+				history: true,				
+				// Display the page number of the current slide
+				slideNumber: true,
+				// Time per slide 36 seconds
+				defaultTiming: 36,
+				// "c/t": 	flattened slide number / total slides
+				slideNumber: 'c/t', 
+				//     "all": show on all views (default)
+				// "speaker": only show slide numbers on speaker notes view
+				//   "print": only show slide numbers when printing to PDF
+				showSlideNumber: 'speaker',
+				
+				math: {
+				//mathjax: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js',
+				config: 'TeX-AMS_HTML-full'  // See http://docs.mathjax.org/en/latest/config-files.html
+				},
+
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/math/math.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
