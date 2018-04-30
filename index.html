@@ -142,7 +142,7 @@
 					<div style="font-size: 30px;"> 
 					<ul>
 						<li><p>Robotic swarms with stochastic behaviors.</p></li>
-						<li><p class="fragment">Macroscopic abstraction using partial differential equations</p></li>
+						<li><p class="fragment">Macroscopic abstraction using partial differential equations.</p></li>
 						<li><p class="fragment">Mapping formulated as an optimal control problem.</p></li>				
 					</ul>
 					</div>					
@@ -357,7 +357,7 @@
 						<ul>
 						<li>It requires large number of robots irrespective of the domain size.</li>
 						<li class="fragment">We need to emulate the process of the obstacle <span style="font-style: italic;color: rgb(255,0,0);">"eating"</span> the robots.</li>
-						<li class="fragment">This can implemented by making robot stop when it encounter the obstacle. Also need to assume that the robots are negligible in size compared to the obstacle.</li>
+						<li class="fragment">This can implemented by making robots stop when it encounter an obstacle. Also need to assume that the robots are negligible in size compared to the obstacle.</li>
 					</ul>						
 					</div>
 					
@@ -369,16 +369,16 @@
 					<div style="position: absolute; width: 960px; height: 450px; left: 0px; font-size: 30px;"> 
 					<h2>First step</h2>
 					<p>
-						As a first step we looked at an interesting subproblem. we quantify the topological features (holes or obstacles) in the domain.
+						As a first step we looked at an interesting subproblem.
 					</p>
 					<p class="fragment">
-						How to classify domains based on the odometry data from the robots?
+						How to classify domains using on the raw odometry data obtained from the robots that explored the domain?
 					</p>
 					<p class="fragment">
 						Classification based on the number of features(holes or obstacles) in a domain is the most straight forward method.
 					</p>
 					<p class="fragment">
-						Is it possible to compute the number of features in a domain using the raw odometry data robustly?
+						Is it possible to robustly compute the number of features in a domain using robots' odometry data?
 					</p>
 					</div>
 				</section>
@@ -389,7 +389,7 @@
 					<h2>Related Work</h2>
 					<ul>
 						<li><p>Our previous work, <span style="color: #129cea">Ramachandran et al.(2015)</span> uses a PDE based model of the swarm to solve the problem. But requires <span style="color: rgb(255,0,0);">robots to negligible compared to the obstacles</span>.</p></li>
-						<li><p class="fragment"><span style="color: #129cea">Ramaithitima et al.(2016)</span> propose an algorithm that covers the free space of the environment with robots and then constructs an approximate generalized Voronoi graph. But requires <span style="color: rgb(255,0,0);">communication</span>.</p></l>		
+						<li><p class="fragment"><span style="color: #129cea">Ramaithitima et al.(2016)</span> propose an algorithm that covers the free space of the environment with robots and then constructs an approximate generalized Voronoi graph. But requires <span style="color: rgb(255,0,0);">centralized decision making</span>.</p></l>		
 						<li><p class="fragment">In <span style="color: #129cea">Dirafzoon et al.(2015)</span> persistent homology is applied on a point cloud of the domain’s free region based on encounter time with robots. But each robot requires <span style="color: rgb(255,0,0);">identification label</span>.</p></li>				
 					</ul>
 					</div>
@@ -476,10 +476,10 @@
 				</section>
 
 				
-				<!-- Probability map TYPE I -->	
+				<!-- unoccupancy heat map TYPE I -->	
 				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" >					
 					<div style="font-size: 30px;">	
-					<h3> Probability map for <span style="color: rgb(255,0,0);">TYPE I</span> environment in Simulation</h3>
+					<h3> unoccupancy heat map for <span style="color: rgb(255,0,0);">TYPE I</span> environment in Simulation</h3>
 					<div class="grid-container5">
 						<div class="item1"><img src="figures/DARS_2016/simulation/0/pdf_0_bounded.png" alt="PDF with 0 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
 						<div class="item2"><img src="figures/DARS_2016/simulation/1/pdf_1_bounded.png" alt="actual map with 0 obstacle" title="Actual map" height="100%" width="100%"></div>
@@ -504,10 +504,10 @@
 				</section>
 
 
-				<!-- Probability map TYPE II -->	
+				<!-- unoccupancy heat map TYPE II -->	
 				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" >					
 					<div style="font-size: 30px;">	
-					<h3> Probability map for <span style="color: rgb(255,0,0);">TYPE II</span> environment in Simulation</h3>
+					<h3> unoccupancy heat map for <span style="color: rgb(255,0,0);">TYPE II</span> environment in Simulation</h3>
 					<div class="grid-container5">
 						<div class="item1"><img src="figures/DARS_2016/simulation/0/pdf_0_unbounded.png" alt="PDF with 0 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
 						<div class="item2"><img src="figures/DARS_2016/simulation/1/pdf_1_unbounded.png" alt="PDF with 1 with 0 obstacle" title="Actual map" height="100%" width="100%"></div>
@@ -537,14 +537,14 @@
 					<div style="font-size: 30px;">	
 					<h3>Finding the Number of Features or Obstacles</h3>
 					<ul>
-						<li><p>Point cloud is obtained by sampling a dense, uniformly random set of points from the domain based on a probability map of the domain and rejecting those points that are inside a grid cell whose $p^f_i$ is below a given threshold.</p></li>
+						<li><p>Point cloud is obtained by sampling a dense, uniformly random set of points from the domain based on a unoccupancy heat map of the domain and rejecting those points that are inside a grid cell whose $p^f_i$ is below a given threshold.</p></li>
 						<li><p class="fragment">Landmark points are selected from the point cloud using the sequential max-min algorithm.</p> </li>
 						<li><p class="fragment">Finally, a Rips complex based filtration is constructed from landmark points and barcode diagrams are extracted.</p></li>
 						<li><p class="fragment">The procedure was tested for Type I & Type II scenarios.</p></li>
 					</ul>
 					</div>
 					<aside class="notes">
-						The new planning technique based on measures could use this. Only Type II results shown in interest of time.
+						max-min algorithm : Find the i<sup>th</sup> point which maximizes the distance to landmark set L<sub>(i-1)</sub>. Only Type II results shown in interest of time.
 					</aside>
 				</section>
 
@@ -596,7 +596,7 @@
 					<h3>Rips complex based filtration with barcode</h3>
 					<img src="figures/background/filtration_example.png" alt="homology example" title="homology example" height="500" width="800">
 					</div>					
-					<aside class="notes"> Delta is the radius of the ball.</aside>
+					<aside class="notes"> Delta is the radius of the ball. These is diagrams are used in machine learning. Robust pattern recognition. Manifold learning. These can considered as finger print for patterns.</aside>
 				</section>
 
 				<!-- Nobel prize in physics -->
@@ -790,7 +790,7 @@
 						<div class="grid-container3">
 							<div class="item1"><img src="figures/DARS_2016/experiment/4RobotSetup.png" alt="Experimental setup" title="Experimental setup" height="92%" width="100%"><figcaption>Experimental setup</figcaption></div>
 							<div class="item2"><img src="figures/DARS_2016/experiment/pdf.png" alt="Experimental Result pdf" title="Experimental result pdf" height="80" width="100%">
-							<figcaption>Probability map</figcaption>
+							<figcaption>unoccupancy heat map</figcaption>
 							<img src="figures/DARS_2016/experiment/pointcloud.png" alt="Experimental Result pointcloud" title="Experimental result pointcloud" height="80" width="100%">
 							<figcaption>Point cloud</figcaption>
 							<img src="figures/DARS_2016/experiment/landmark.png" alt="Experimental Result landmark" title="Experimental result landmark" height="80" width="100%">
@@ -892,13 +892,13 @@
 					<h3>What more can be done?</h3>
 					<ul>
 						<li><p>Can we build a topological map of the domain?</p></li>
-						<li><p class="fragment fade-up">How to post process the occupancy grid map</p></li>
-						<li><p class="fragment fade-up">Maximum a posteriori estimation is exponential in the number of grid cell</p></li>
-						<li><p class="fragment fade-up">Can we use topological ideas to post processing of the map.</p></li>
+						<li><p class="fragment fade-up">How to do post-processing the unoccupancy heat map?</p></li>
+						<li><p class="fragment fade-up">Maximum a posteriori estimation(MAP) process is exponential in the number of grid cell.</p></li>
+						<li><p class="fragment fade-up">Can we use topological ideas perform post-processing of the heat map.</p></li>
 					</ul>
 					</div>
 					<aside class="notes"> 
-						Talk a little bit about MAP and intuition behind using the topological ideas.
+						Post process to find the most likely unoccupied regions. Talk a little bit about MAP and intuition behind using the topological ideas.
 					</aside>
 				</section>
 
@@ -909,16 +909,16 @@
 					<div style="font-size: 30px;"> 				
 					<h3>Compute Threshold And Identify Number Of Obstacles</h3>
 					<ul>
-						<li><p>A filtration is generated by the thresholding the probability map and constructing a simplicial complex at each level and choosing $\delta$ = 1 − threshold ($\alpha$) as the <span style="font-style: italic;">filtration parameter</span></p></li>
+						<li><p>A filtration is generated by the thresholding the unoccupancy heat map and constructing a simplicial complex at each level and choosing $\delta$ = 1 − threshold ($\alpha$) as the <span style="font-style: italic;">filtration parameter</span></p></li>
 						<li><p class="fragment fade-up">The barcode generated out of this filtration can be used to compute optimal threshold and identify number of obstacle.</p></li>
 					</ul>
 					</div>
 				</section>
 
 
-				<!-- Density Function Thresholding Based Filtration Illustration -->
+				<!-- unoccupancy heat map Thresholding Based Filtration Illustration -->
 				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" >
-					<h3>Density Function Thresholding Based on Filtration</h3>
+					<h3>unoccupancy heat map Thresholding Based on Filtration</h3>
 					<div style="font-size: 30px;"> 
 						<div style="position: absolute; width: 460px; height: 420px; left: 0px;">
 						<img src="figures/RAL_2017/2/world.png" alt="World" title="World" height="70%" width="100%">
@@ -926,16 +926,16 @@
 						</div>
 						<div style="position: absolute; width: 460px; height: 420px; right: 0px;">
 						<img src="figures/RAL_2017/2/pdf_map.png" alt="PDF map" title="PDF map" height="70%" width="100%">
-						<figcaption><p style="font-size: 25px">Computed density function </p></figcaption> 
+						<figcaption><p style="font-size: 25px">Computed unoccupancy heat map </p></figcaption> 
 						</div>						
 					</div>
 				</section>
 
 
 
-				<!-- Density Function Thresholding Based Filtration Illustration 2-->
+				<!-- unoccupancy heat map Thresholding Based Filtration Illustration 2-->
 				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" >
-					<h3>Density Function Thresholding Based on Filtration</h3>
+					<h3>unoccupancy heat map Thresholding Based on Filtration</h3>
 					<h4>Simplicial complex for each filtration value</h4>
 					<div style="font-size: 30px;"> 
 						<div style="position: absolute; width: 460px; height: 420px; left: 0px;">
@@ -950,9 +950,9 @@
 				</section>
 
 
-				<!-- Density Function Thresholding Based Filtration Illustration 3-->
+				<!-- unoccupancy heat map Thresholding Based Filtration Illustration 3-->
 				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" >
-					<h3>Density Function Thresholding Based on Filtration</h3>
+					<h3>unoccupancy heat map Thresholding Based on Filtration</h3>
 					<h4>Simplicial complex for each filtration value</h4>
 					<div style="font-size: 30px;"> 
 						<div style="position: absolute; width: 460px; height: 420px; left: 0px;">
@@ -968,9 +968,9 @@
 
 
 
-				<!-- Density Function Thresholding Based Filtration Illustration 4-->
+				<!-- unoccupancy heat map Thresholding Based Filtration Illustration 4-->
 				<section data-background-image="figures/background/black_maroon.png" data-background-size="100% 100%" >
-					<h3>Density Function Thresholding Based on Filtration</h3>
+					<h3>unoccupancy heat map Thresholding Based on Filtration</h3>
 					<h4>Simplicial complex for each filtration value</h4>
 					<div style="font-size: 30px;"> 
 						<div style="position: absolute; width: 460px; height: 420px; left: 0px;">
@@ -1019,7 +1019,7 @@
 						</div>
 						<div style="position: absolute; width: 460px; height: 450px; right: 0px;">
 						<img src="figures/RAL_2017/3/pdf_map.png" alt="filtration" title="filtration" height="70%" width="100%">
-						<figcaption><p style="font-size: 25px">Density function computed</p></figcaption> 
+						<figcaption><p style="font-size: 25px">unoccupancy heat map computed</p></figcaption> 
 						</div>						
 					</div>
 				</section>
@@ -1121,13 +1121,16 @@
 					<div style="font-size: 30px;"> 
 						<h3>Computational Complexity</h3>
 					<ul>
-						<li><p><span style="font-weight: bold;">Probability map generation:</span> $\mathcal{O}(NKM)$, where $N$ robots each collect $K$ items of data over a domain that is discretized into $M$ grid cells.</p></li>
+						<li><p><span style="font-weight: bold;">unoccupancy heat map generation:</span> $\mathcal{O}(NKM)$, where $N$ robots each collect $K$ items of data over a domain that is discretized into $M$ grid cells.</p></li>
 						<li><p><span style="font-weight: bold;">Simplicial complex construction and barcode generation :</span> $\mathcal{O}(M^{2.372})$, but for most practical applications it is close to $\mathcal{O}(M)$.</p></li>						
 						<li><p><span style="font-weight: bold;">Obstacle segmentation :</span> $\mathcal{O}(M)$.</p></li>
 						<li><p><span style="font-weight: bold;">AGVD extraction using the wave propagation algorithm :</span>$\mathcal{O}(M\log{M})$.</p></li>
 						<li><p><span style="font-weight: bold;">Worst case complexity of the approach :</span> $\mathcal{O}(M^{2.372})$.</p></li>
 					</ul>
-					</div>					
+					</div>		
+					<aside class="notes">
+						We can further reduce the computation by sub-sampling the points landmark selection. 
+					</aside>			
 				</section>
 
 
@@ -1221,7 +1224,7 @@
 						<div class="item5"><img src="figures/RAL_2018/4/world.png" alt="PDF with 4 obstacle" title="$p^f_i$ contour plot" height="100%" width="100%"></div>
 					</div>
 
-					<div style="position: relative; top: 25px"><h4>Probability map</h4></div>
+					<div style="position: relative; top: 25px"><h4>unoccupancy heat map</h4></div>
 
 					<div class="grid-container5">
 						<div class="item1"><img src="figures/RAL_2018/0/Filtered_pdf.png" alt="PDF with 0 obstacle" title="$p^f_i$ contour plot" height="80%" width="100%">
@@ -1686,6 +1689,7 @@
 							<source src="videos/out.mp4" type="video/mp4"/>
 					</video>
 					<p style="position: relative; top: 0px; font-size: 20px">Time of deployment : $15\ minutes$</p>
+					<aside class="notes">Do not have the privilege to details </aside>
 					
 				</section>
 
@@ -1760,6 +1764,12 @@
 				// "speaker": only show slide numbers on speaker notes view
 				//   "print": only show slide numbers when printing to PDF
 				showSlideNumber: 'speaker',
+
+				// slide transition
+				transition: 'convex',
+
+				// slide transition speed default is default
+				transitionSpeed: 'default',
 				
 				math: {
 				//mathjax: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js',
